@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trading AI PRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            background: #0b1220;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 15px;
+            width: 200px;
+        }
+
+        .buy { color: lime; }
+        .sell { color: red; }
+        .wait { color: orange; }
+    </style>
+</head>
+
+<body>
+
+    <h1>🚀 Trading AI PRO</h1>
+
+    <!-- 🔥 GRÁFICO -->
+    <div>
+        <iframe 
+            src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&interval=15&theme=dark"
+            width="90%" height="400" frameborder="0">
+        </iframe>
+    </div>
+
+    <!-- 🔥 CARDS -->
+    <div class="container">
+
+        <div class="card">
+            <h2>15m</h2>
+            <p class="{{ results['15m'].signal | lower }}">{{ results['15m'].signal }}</p>
+            <p>RSI: {{ results['15m'].rsi }}</p>
+            <p>Inicio: {{ results['15m'].start_time }}</p>
+            <p>Fin: {{ results['15m'].end_time }}</p>
+        </div>
+
+        <div class="card">
+            <h2>1h</h2>
+            <p class="{{ results['1h'].signal | lower }}">{{ results['1h'].signal }}</p>
+            <p>RSI: {{ results['1h'].rsi }}</p>
+            <p>Inicio: {{ results['1h'].start_time }}</p>
+            <p>Fin: {{ results['1h'].end_time }}</p>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+body {
+body {
+    margin: 0;
+    background: linear-gradient(180deg, #0f172a, #020617);
+    color: white;
+    font-family: Arial;
+}
+
+/* CONTENEDOR MOBILE */
+.container {
+    max-width: 400px;
+    margin: auto;
+    padding: 15px;
+}
+
+/* TITULO */
+.title {
+    text-align: center;
+    font-size: 22px;
+}
+
+/* ALERTA */
+.alert {
+    background: red;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* SEÑAL GLOBAL */
+.global-box {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.global-box.BUY { background: #065f46; }
+.global-box.SELL { background: #7f1d1d; }
+.global-box.WAIT { background: #92400e; }
+
+.big-signal {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+/* CONTROLES */
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+select, button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+}
+
+/* GRAFICO */
+.chart {
+    margin-top: 15px;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+/* CARDS */
+.cards {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+/* SEÑALES */
+.signal {
+    margin-top: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.signal.BUY { color: #22c55e; }
+.signal.SELL { color: #ef4444; }
+.signal.WAIT { color: #facc15; }
+.history {
+    margin-top: 30px;
+}
+
+.history table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history th, .history td {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    text-align: center;
+}
+
+.BUY {
+    color: #00ff88;
+}
+
+.SELL {
+    color: #ff4d4d;
+}
+
+.WAIT {
+    color: #ffaa00;
+}
