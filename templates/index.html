@@ -1,70 +1,189 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Trading IA</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading AI PRO</title>
 
-    <style>
-        body {
-            background: #0f0f0f;
-            color: white;
-            font-family: Arial;
-            text-align: center;
-        }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="10">
 
-        .box {
-            background: #1c1c1c;
-            margin: 20px;
-            padding: 20px;
-            border-radius: 10px;
-        }
+<style>
+body{
+    background:#0b0f1a;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+    margin:0;
+    padding:10px;
+}
 
-        select {
-            padding: 10px;
-            font-size: 16px;
-            margin-top: 10px;
-        }
+/* CONTENEDOR */
+.container{
+    max-width:1200px;
+    margin:auto;
+}
 
-        .buy { color: lime; }
-        .sell { color: red; }
-        .wait { color: orange; }
-    </style>
+/* TARJETAS */
+.card{
+    background:#1c2433;
+    margin:10px;
+    padding:15px;
+    border-radius:10px;
+}
+
+/* COLORES */
+.BUY{color:#00ff88}
+.SELL{color:#ff4d4d}
+.WAIT{color:#ffaa00}
+
+/* GRID RESPONSIVE */
+.cards{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.card{
+    width:300px;
+}
+
+/* TABLA */
+.table-container{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    margin-top:20px;
+    border-collapse:collapse;
+    min-width:600px;
+}
+
+td,th{
+    padding:8px;
+}
+
+/* FORM */
+select,button{
+    padding:8px;
+    border-radius:6px;
+    border:none;
+    margin:5px;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+    h1{font-size:22px;}
+    h2{font-size:18px;}
+
+    .card{
+        width:100%;
+    }
+}
+</style>
+
 </head>
 
 <body>
 
-    <h1>📊 Trading IA</h1>
+<div class="container">
 
-    <div class="box">
-        <h2>{{ symbol }}</h2>
+<h1>🚀 Trading AI PRO</h1>
 
-        <!-- 🔥 AÑADIDO (selector timeframe) -->
-        <select id="timeframe" onchange="changeTF()">
-            <option value="1m" {% if timeframe == "1m" %}selected{% endif %}>1m</option>
-            <option value="5m" {% if timeframe == "5m" %}selected{% endif %}>5m</option>
-            <option value="15m" {% if timeframe == "15m" %}selected{% endif %}>15m</option>
-            <option value="30m" {% if timeframe == "30m" %}selected{% endif %}>30m</option>
-            <option value="1h" {% if timeframe == "1h" %}selected{% endif %}>1h</option>
-            <option value="4h" {% if timeframe == "4h" %}selected{% endif %}>4h</option>
-        </select>
+<h2 class="{{ final }}">{{ final }}</h2>
+<p>Actualizado: {{ update }}</p>
 
-        <h1 class="{{ result.signal | lower }}">
-            {{ result.signal }}
-        </h1>
+<form method="POST">
+<select name="symbol">
+<option>BTCUSDT</option>
+<option>ETHUSDT</option>
+<option>SOLUSDT</option>
+<option>BNBUSDT</option>
+<option>XRPUSDT</option>
+<option>ADAUSDT</option>
+</select>
+<button>Actualizar</button>
+</form>
 
-        <p>RSI: {{ result.rsi }}</p>
+<!-- 🔥 GRÁFICO (AÑADIDO SIN ROMPER NADA) -->
+<div style="margin-top:20px;">
+    <div id="tradingview_chart"></div>
+</div>
 
-        <p>Inicio: {{ start_time }}</p>
-        <p>Fin: {{ end_time }}</p>
-    </div>
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+new TradingView.widget({
+    "width": "100%",
+    "height": 400,
+    "symbol": "{{ symbol }}",
+    "interval": "15",
+    "timezone": "Etc/UTC",
+    "theme": "dark",
+    "style": "1",
+    "locale": "es",
+    "toolbar_bg": "#0b0f1a",
+    "enable_publishing": false,
+    "allow_symbol_change": true
+});
+</script>
 
-    <!-- 🔥 AÑADIDO (JS para cambiar timeframe) -->
-    <script>
-        function changeTF() {
-            const tf = document.getElementById("timeframe").value;
-            window.location.href = `/?tf=${tf}`;
-        }
-    </script>
+<!-- CARDS -->
+<div class="cards">
+{% for tf,data in results.items() %}
+<div class="card">
+<h3>{{ tf }}</h3>
+<p>{{ data.signal }}</p>
+<p>RSI: {{ data.rsi }}</p>
+<p>Inicio: {{ data.inicio }}</p>
+<p>Fin: {{ data.fin }}</p>
+<p>⏳ <span data-fin="{{ data.fin }}">--</span></p>
+</div>
+{% endfor %}
+</div>
+
+<h3>Winrate: {{ winrate }}%</h3>
+
+<!-- TABLA -->
+<div class="table-container">
+<table>
+<tr>
+<th>Hora</th>
+<th>Señal</th>
+<th>Precio</th>
+<th>TP</th>
+<th>SL</th>
+<th>Resultado</th>
+</tr>
+
+{% for h in history %}
+<tr>
+<td>{{ h.hora }}</td>
+<td class="{{ h.signal }}">{{ h.signal }}</td>
+<td>{{ h.precio }}</td>
+<td>{{ h.tp }}</td>
+<td>{{ h.sl }}</td>
+<td>{{ h.resultado }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+</div>
+
+<!-- TIMER -->
+<script>
+setInterval(()=>{
+document.querySelectorAll("[data-fin]").forEach(el=>{
+let f=el.dataset.fin.split(":");
+let t=new Date();
+t.setHours(f[0]);t.setMinutes(f[1]);
+let d=(t-new Date())/1000;
+if(d<0)d=0;
+let m=Math.floor(d/60);
+let s=Math.floor(d%60);
+el.innerText=`${m}:${s}`;
+});
+},1000);
+</script>
 
 </body>
 </html>
