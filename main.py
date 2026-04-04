@@ -5,33 +5,37 @@ import datetime
 
 app = Flask(__name__)
 
-@app.route("/", methods=["GET"])
+@app.route("/")
 def index():
-    try:
-        symbol = request.args.get("symbol", "BTCUSDT")
+    symbol = request.args.get("symbol", "BTCUSDT")
 
-        print("🔥 MAIN INICIANDO...")
+    # 🔥 DATOS
+    df_15m = get_binance_data(symbol, "15m")
+    df_1h = get_binance_data(symbol, "1h")
 
-        # 🔥 15m
-        df_15m = get_binance_data(symbol, "15m")
-        result_15m = analyze(df_15m)
+    # 🔥 ANALISIS
+    result_15m = analyze(df_15m)
+    result_1h = analyze(df_1h)
 
-        # 🔥 1h
-        df_1h = get_binance_data(symbol, "1h")
-        result_1h = analyze(df_1h)
+    now = datetime.datetime.now().strftime("%H:%M:%S")
 
-        now = datetime.datetime.now().strftime("%H:%M:%S")
+    return render_template(
+        "index.html",
+        symbol=symbol,
+        time=now,
 
-        return render_template(
-            "index.html",
-            symbol=symbol,
-            time=now,
-            rsi_15m=result_15m["rsi"],
-            signal_15m=result_15m["signal"],
-            rsi_1h=result_1h["rsi"],
-            signal_1h=result_1h["signal"]
-        )
+        rsi_15m=result_15m["rsi"],
+        signal_15m=result_15m["signal"],
+        inicio_15m=result_15m["inicio"],
+        fin_15m=result_15m["fin"],
+        tiempo_15m=result_15m["tiempo"],
 
-    except Exception as e:
-        print("❌ ERROR MAIN:", e)
-        return "ERROR INTERNO"
+        rsi_1h=result_1h["rsi"],
+        signal_1h=result_1h["signal"],
+        inicio_1h=result_1h["inicio"],
+        fin_1h=result_1h["fin"],
+        tiempo_1h=result_1h["tiempo"]
+    )
+
+if __name__ == "__main__":
+    app.run(debug=True)
