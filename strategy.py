@@ -1,8 +1,5 @@
 import pandas as pd
 
-# ==============================
-# CALCULAR RSI
-# ==============================
 def calcular_rsi(df, periodo=14):
     delta = df["close"].diff()
 
@@ -14,16 +11,15 @@ def calcular_rsi(df, periodo=14):
 
     return rsi
 
-# ==============================
-# ESTRATEGIA
-# ==============================
 def strategy(df):
     try:
         df["rsi"] = calcular_rsi(df)
 
         ultimo_rsi = df["rsi"].iloc[-1]
 
-        # 🎯 SEÑALES
+        if pd.isna(ultimo_rsi):
+            return {"signal": "WAIT ⏳", "rsi": "N/A"}
+
         if ultimo_rsi < 30:
             signal = "BUY 🚀"
         elif ultimo_rsi > 70:
@@ -37,7 +33,7 @@ def strategy(df):
         }
 
     except Exception as e:
-        print("❌ ERROR EN STRATEGY:", e)
+        print("❌ ERROR STRATEGY:", e)
         return {
             "signal": "ERROR ❌",
             "rsi": "N/A"
