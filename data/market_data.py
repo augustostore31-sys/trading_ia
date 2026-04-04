@@ -31,6 +31,9 @@ def get_binance_data(symbol="BTCUSDT", interval="15m", limit=100):
 
         print("✅ DATA OK:", df.tail())
 
+        
+        df["time"] = pd.to_datetime(df["time"], unit="ms")
+
         return df
 
     except Exception as e:
