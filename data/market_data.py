@@ -12,21 +12,23 @@ def get_binance_data(symbol="BTCUSDT", interval="15m", limit=100):
         }
 
         response = requests.get(url, params=params)
+
+        if response.status_code != 200:
+            print("❌ ERROR API:", response.text)
+            return None
+
         data = response.json()
 
-        # 🔥 Convertir a DataFrame
+        if not data:
+            print("❌ DATA VACÍA")
+            return None
+
         df = pd.DataFrame(data)
 
-        # ⚠️ Binance devuelve muchas columnas → usamos solo las necesarias
         df = df.iloc[:, :6]
-
         df.columns = ["time", "open", "high", "low", "close", "volume"]
 
-        # 🔥 Convertir tipos
         df["close"] = df["close"].astype(float)
-        df["open"] = df["open"].astype(float)
-        df["high"] = df["high"].astype(float)
-        df["low"] = df["low"].astype(float)
 
         return df
 
