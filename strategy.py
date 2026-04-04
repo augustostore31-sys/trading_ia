@@ -1,61 +1,53 @@
 import pandas as pd
-import datetime
 
-def calculate_rsi(df, period=14):
+def rsi(df, period=14):
     delta = df["close"].diff()
 
-    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+    gain = delta.clip(lower=0).rolling(period).mean()
+    loss = -delta.clip(upper=0).rolling(period).mean()
 
     rs = gain / loss
-    rsi = 100 - (100 / (1 + rs))
+    return 100 - (100 / (1 + rs))
 
-    return rsi
+def strategy(df):
+    df = df.copy()
 
-def analyze(df):
-    if df is None or df.empty:
-        return error()
+    df["rsi"] = rsi(df)
 
-    df["rsi"] = calculate_rsi(df)
+    trend = "ALCISTA" if df["close"].iloc[-1] > df["close"].iloc[-10] else "BAJISTA"
+    rsi_val = df["rsi"].iloc[-1]
 
-    if df["rsi"].isna().all():
-        return error()
+    score = 0
 
-    ultimo_rsi = df["rsi"].iloc[-1]
-
-    # 🔥 TIEMPO REAL
-    last_time = df["time"].iloc[-1]
-
-    diff = (df["time"].iloc[-1] - df["time"].iloc[-2]).seconds / 60
-    interval = int(diff)
-
-    end_time = last_time + datetime.timedelta(minutes=interval)
-    now = datetime.datetime.utcnow()
-
-    remaining = end_time - now
-    minutos = max(0, int(remaining.total_seconds() / 60))
-
-    # 🔥 SIGNAL
-    if ultimo_rsi < 30:
-        signal = "BUY 🟢"
-    elif ultimo_rsi > 70:
-        signal = "SELL 🔴"
+    if trend == "ALCISTA":
+        score += 1
     else:
-        signal = "WAIT 🟡"
+        score -= 1
+
+    if rsi_val < 30:
+        score += 1
+    elif rsi_val > 70:
+        score -= 1
+
+    if score >= 2:
+        signal = "BUY"
+    elif score <= -2:
+        signal = "SELL"
+    else:
+        signal = "WAIT"
+
+    try:
+        delta = df.index[-1] - df.index[-2]
+        inicio = df.index[-1].strftime("%H:%M")
+        fin = (df.index[-1] + delta).strftime("%H:%M")
+    except:
+        inicio, fin = "-", "-"
 
     return {
         "signal": signal,
-        "rsi": round(float(ultimo_rsi), 2),
-        "inicio": last_time.strftime("%H:%M"),
-        "fin": end_time.strftime("%H:%M"),
-        "tiempo": f"{minutos} min ⏳"
-    }
-
-def error():
-    return {
-        "signal": "ERROR ❌",
-        "rsi": "N/A",
-        "inicio": "-",
-        "fin": "-",
-        "tiempo": "-"
+        "trend": trend,
+        "rsi": round(rsi_val, 2),
+        "score": score,
+        "inicio": inicio,
+        "fin": fin
     }
