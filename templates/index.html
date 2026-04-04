@@ -4,49 +4,44 @@
     <title>Trading AI PRO</title>
     <style>
         body {
-            background: #0b1220;
+            background: #0b132b;
             color: white;
             text-align: center;
             font-family: Arial;
         }
-
-        .box {
-            display: inline-block;
-            margin: 20px;
+        .card {
+            background: #1c2541;
             padding: 20px;
-            background: #1c2333;
+            margin: 20px;
+            display: inline-block;
             border-radius: 10px;
             width: 200px;
-        }
-
-        button {
-            padding: 10px;
-            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <h1>🚀 Trading AI PRO</h1>
+<h1>🚀 Trading AI PRO</h1>
+<p>Actualizado: {{ time }}</p>
 
-    <p>Actualizado: {{ time }}</p>
+<form method="GET">
+    <input name="symbol" value="{{ symbol }}">
+    <button type="submit">Actualizar</button>
+</form>
 
-    <form method="GET">
-        <input name="symbol" value="{{ symbol }}">
-        <button type="submit">Actualizar</button>
-    </form>
+<div class="card">
+    <h2>15m</h2>
+    <p>{{ signal_15m }}</p>
+    <p>RSI: {{ rsi_15m }} 📊</p>
+</div>
 
-    <div class="box">
-        <h2>15m</h2>
-        <p>{{ res_15m.signal }}</p>
-        <p>RSI: {{ res_15m.rsi }} 📊</p>
-    </div>
+<div class="card">
+    <h2>1h</h2>
+    <p>{{ signal_1h }}</p>
+    <p>RSI: {{ rsi_1h }} 📊</p>
+</div>
 
-    <div class="box">
-        <h2>1h</h2>
-        <p>{{ res_1h.signal }}</p>
-        <p>RSI: {{ res_1h.rsi }} 📊</p>
-    </div>
-
+</body>
+</html>
 </body>
 </html>
