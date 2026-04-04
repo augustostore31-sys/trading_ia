@@ -7,6 +7,12 @@ import datetime
 
 app = Flask(__name__)
 
+df = get_binance_data("BTCUSDT", "15m")
+
+if df is not None:
+    result = strategy(df)
+else:
+    result = {"signal": "ERROR ❌", "rsi": "N/A"}
 # ==============================
 # FUNCIÓN PARA FORMATEAR TIEMPO
 # ==============================
